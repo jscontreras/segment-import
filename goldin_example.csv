@@ -1,0 +1,2 @@
+action,userId,timestamp,traits.address.city,traits.address.country,traits.address.postalCode,traits.address.state,traits.address.street,traits.addressLine1,traits.addressLine2,traits.dateOfBirth,traits.email,traits.logins,traits.name,traits.payment_method_provided,traits.phone,traits.plan,traits.registrationDate,traits.shipping_address_provided
+identify,test-user-5sma84,2022-02-10T22:03:09.421Z,San Francisco,USA,94103,CA,6th St,6th St,,1990-02-23T22:28:55.387Z,mike@example.com,5,Mike Gibbons,false,(929)428-9999,premium,2021-02-23T22:28:55.387Z,false

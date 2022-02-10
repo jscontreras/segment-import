@@ -43,6 +43,14 @@ segImport.controller('mainController', ['$scope', '$http',
           obj[headers[j]] = currentLine[j];
         }
       }
+
+      if (obj.traits.payment_method_provided) {
+        obj.traits.payment_method_provided = obj.traits.payment_method_provided == "false"? false : true;
+      }
+      if (obj.traits.shipping_address_provided) {
+        obj.traits.shipping_address_provided = obj.traits.shipping_address_provided == "false"? false : true;
+      }
+
       this.JSON.push(obj);
     }
 
@@ -51,7 +59,6 @@ segImport.controller('mainController', ['$scope', '$http',
 
   // Post csv.JSON to end point.
   csv.importJSON = function importJSON() {
-    console.log(this.JSON);
     $http.post('/api/import', {batch: this.JSON, writeKey: this.writeKey})
     .success(function(err, data) {
       console.log(err);
