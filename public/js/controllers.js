@@ -44,11 +44,20 @@ segImport.controller('mainController', ['$scope', '$http',
         var currentLine = this.array[i];
         for (var j = 0; j < headers.length; j++) {
           if (headers[j].indexOf('.') > 0) {
-            var prefix = headers[j].substring(0, headers[j].indexOf('.'));
-            var suffix = headers[j].substring(headers[j].indexOf('.') + 1);
-            if (!obj[prefix])
-              obj[prefix] = {};
-            obj[prefix][suffix] = currentLine[j];
+            // obtain parts
+            var parts = headers[j].split('.');
+            // chaining parts
+            var ref = obj;
+            for (var k =0; k < parts.length; k++) {
+              if(!ref[parts[k]]) {
+                ref[parts[k]]={}
+              }
+              if (k+1 < parts.length) {
+                ref = ref[parts[k]]
+              }
+            }
+
+            ref[parts[parts.length-1]] = currentLine[j];
           } else {
             obj[headers[j]] = currentLine[j];
           }
