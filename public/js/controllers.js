@@ -87,7 +87,7 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Post csv.JSON to end point.
     csv.importJSON = async function importJSON() {
-      var slices = csv.spliceIntoChunks(this.JSON,500);
+      var slices = csv.spliceIntoChunks(this.JSON,1000);
       for (var i = 0; i < slices.length; i++) {
         await new Promise(r => setTimeout(r, 2000));
         $http.post('/api/import', { batch: slices[i], writeKey: this.writeKey })
