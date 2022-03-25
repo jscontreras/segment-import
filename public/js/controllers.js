@@ -35,13 +35,31 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Convert csv.array to csv.JSON.
     csv.arrayToJSON = function arrayToJSON() {
-
-      var headers = this.array[0];
+      const regex = /\d\d\d\d-\d\d?-\d\d?\s?\d\d?:\d\d?:\d\d?/gm;
+      var headersStock = this.array[0];
+      var headers = [];
+      for (var i =0; i< headersStock.length; i++) {
+        var header = headersStock[i];
+        headers.push(header.endsWith('_')? header.slice(0, -1): header);
+      }
       this.JSON.length = 0;
 
+      // Now go to every line
       for (var i = 1; i < this.array.length; i++) {
         var obj = {};
         var currentLine = this.array[i];
+
+        for (var j=0; j<currentLine.length; j++) {
+          // convert "true" and "false" to booleans equivalents
+          if(['false', 'true', 'FALSE', 'TRUE'].includes(currentLine[j])) {
+            currentLine[j] = ['true', 'TRUE'].includes(currentLine[j]);
+          }
+          // Converts dates to the right format
+          if (regex.test(currentLine[j])) {
+            currentLine[j] =  new Date(currentLine[j]).toISOString();
+          }
+        }
+
         for (var j = 0; j < headers.length; j++) {
           if (headers[j].indexOf('.') > 0) {
             // obtain parts
@@ -61,22 +79,6 @@ segImport.controller('mainController', ['$scope', '$http',
           } else {
             obj[headers[j]] = currentLine[j];
           }
-        }
-
-        if (obj.traits.payment_method_provided) {
-          obj.traits.payment_method_provided = obj.traits.payment_method_provided.startsWith("false") ? false : true;
-        }
-        if (obj.traits.shipping_address_provided) {
-          obj.traits.shipping_address_provided = obj.traits.shipping_address_provided.startsWith("false") ? false : true;
-        }
-
-        if (obj.traits.registrationDate_) {
-          obj.traits.registrationDate = new Date(obj.traits.registrationDate_).toISOString();
-          delete obj.traits.registrationDate_
-        }
-
-        if (obj.timestamp) {
-          obj.timestamp = new Date(obj.timestamp).toISOString();
         }
 
         this.JSON.push(obj);
