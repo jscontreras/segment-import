@@ -2,15 +2,20 @@
 
 You can now import a CSV directly into Segment for you to see what the data looks like.
 
+Run `npm start` then visit `localhost:3000`.
+Provide  your `write api key` from any **analytics.js** source and select the `CSV` file.
+
+Verify your `JSON objects` and scroll to the bottom of the page and click `import`.
+
+> Records are processed in batches of `1000` records executed with a delay of `1 second`. Inspect the `browser console` to see how the callbacks sets are processed.
+
+## DATA CONVERSIONS
+
 ### Boolean Values
 The application automatically converts `true`,`TRUE`, `false`, `FALSE` stings to the corresponding boolean values.
 ### Date Strings
 The application automatically converts dates like `2021-11-02 9:20:35` to the corresponding ` ISO-8601` format.
 
-
-## Executing the Script
-Run `npm start` then visit `localhost:3000`.
-Provide  your `write api key` from any **analytics.js** source and select the `CSV` file.
 
 ## Track Event Example
 The script parses column names with `.` as nested properties.
