@@ -28,14 +28,13 @@ Will produce a JSON entry like this
 {
   "type": "track",
   "event": "User Placed Bid",
-  "originalTimestamp": "2022-03-18T20:12:00.217Z",
+  "timestamp": "2022-03-18T20:12:00.336Z",
+  "userId": "2c79973c-13bc-4938-b540-1d27acaa9ef5",
   "properties": {
     "amount": 1300,
     "lot_id": "202201-1119-4529-10cf07d0-1fb4-48e3-b378-9bb7b47c5c50",
     "source": "unknown"
-  },
-  "timestamp": "2022-03-18T20:12:00.336Z",
-  "userId": "2c79973c-13bc-4938-b540-1d27acaa9ef5"
+  }
 }
 ```
 
