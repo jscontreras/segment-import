@@ -35,7 +35,8 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Convert csv.array to csv.JSON.
     csv.arrayToJSON = function arrayToJSON() {
-      const regex = /\d\d\d\d-\d\d?-\d\d?\s?\d\d?:\d\d?:\d\d?/gm;
+      const regexDateFormat1 = /\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm;
+      const regexDateFormat2 = /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm;
       var headersStock = this.array[0];
       var headers = [];
       for (var i =0; i< headersStock.length; i++) {
@@ -55,7 +56,7 @@ segImport.controller('mainController', ['$scope', '$http',
             currentLine[j] = ['true', 'TRUE'].includes(currentLine[j]);
           }
           // Converts dates to the right format
-          if (regex.test(currentLine[j])) {
+          if (regexDateFormat1.test(currentLine[j]) || regexDateFormat2.test(currentLine[j])) {
             currentLine[j] =  new Date(currentLine[j]).toISOString();
           }
         }
