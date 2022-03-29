@@ -51,6 +51,8 @@ segImport.controller('mainController', ['$scope', '$http',
         var currentLine = this.array[i];
 
         for (var j=0; j<currentLine.length; j++) {
+          // clean lines and weird values
+          currentLine[j] = currentLine[j].replace(/(\r\n|\n|\r)/gm, "");
           // convert "true" and "false" to booleans equivalents
           if(['false', 'true', 'FALSE', 'TRUE'].includes(currentLine[j])) {
             currentLine[j] = ['true', 'TRUE'].includes(currentLine[j]);
