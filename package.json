@@ -14,9 +14,11 @@
   },
   "private": true,
   "dependencies": {
+    "axios": "^0.26.1",
+    "config": "^3.3.7",
     "express": "3.x",
-    "underscore": "latest",
+    "http-assert": "latest",
     "request": "latest",
-    "http-assert": "latest"
+    "underscore": "latest"
   }
 }

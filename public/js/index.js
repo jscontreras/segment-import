@@ -1,6 +1,15 @@
 'use strict';
 
+
+async function readTextFile() {
+  const resp = await axios.get('/config/conversions.json');
+  return await resp.data;
+}
+
 window.onload = function() {
+  readTextFile().then(data => {
+    window.conversionData = data;
+  })
   var fileInput = document.getElementById('fileInput');
   var fileDisplayArea = document.getElementById('fileDisplayArea');
   var csvFile = {};

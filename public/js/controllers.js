@@ -1,6 +1,5 @@
 'use strict';
 
-
 segImport.controller('mainController', ['$scope', '$http',
   function ($scope, $http) {
     var csv = $scope.csv = {};
@@ -33,8 +32,18 @@ segImport.controller('mainController', ['$scope', '$http',
       return res;
     }
 
+    csv.applyConversions = function applyConversions(fieldName, fieldValue) {
+      if(conversionData.stringToint.includes(fieldName)) {
+        let source = fieldValue.replace(',','');
+        source = source.replace("'",'');
+        return Number(source);
+      }
+      return fieldValue;
+    }
+
+
     // Convert csv.array to csv.JSON.
-    csv.arrayToJSON = function arrayToJSON() {
+    csv.arrayToJSON =  async function arrayToJSON() {
       const regexDateFormats = [/\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm, /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm, /\d\d\d\d-(0|1)\d-\d\d?T\d\d:\d\d:\d\d.\d\d\d\d\d\d/gm];
       var headersStock = this.array[0];
       var headers = [];
@@ -78,9 +87,11 @@ segImport.controller('mainController', ['$scope', '$http',
                 ref = ref[parts[k]]
               }
             }
-
-            ref[parts[parts.length - 1]] = currentLine[j];
+            const fieldName = parts[parts.length - 1];
+            currentLine[j] = this.applyConversions(fieldName, currentLine[j]);
+            ref[fieldName] = currentLine[j];
           } else {
+            currentLine[j] = this.applyConversions(headers[j], currentLine[j]);
             obj[headers[j]] = currentLine[j];
           }
         }
@@ -95,19 +106,21 @@ segImport.controller('mainController', ['$scope', '$http',
     csv.importJSON = async function importJSON() {
       var slices = csv.spliceIntoChunks(this.JSON, 1000);
       console.log('Starting import...')
-      for (var i = 0; i < slices.length; i++) {
+      var i = 0;
+      for (i = 0; i < slices.length; i++) {
         await new Promise(r => setTimeout(r, 2000));
         $http.post('/api/import', { batch: slices[i], writeKey: this.writeKey })
           .success(function (err, data) {
             console.log(err);
             console.log(data);
+            if(i == slices.length) {
+              console.log('Import Completed!');
+            }
           })
           .error(function (err, data) {
             console.log(err);
             console.log(data);
           });
       }
-      console.log('Import completed!')
-
     };
   }]);
