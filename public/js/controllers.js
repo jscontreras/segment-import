@@ -35,13 +35,12 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Convert csv.array to csv.JSON.
     csv.arrayToJSON = function arrayToJSON() {
-      const regexDateFormat1 = /\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm;
-      const regexDateFormat2 = /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm;
+      const regexDateFormats = [/\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm, /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm, /\d\d\d\d-(0|1)\d-\d\d?T\d\d:\d\d:\d\d.\d\d\d\d\d\d/gm];
       var headersStock = this.array[0];
       var headers = [];
-      for (var i =0; i< headersStock.length; i++) {
+      for (var i = 0; i < headersStock.length; i++) {
         var header = headersStock[i];
-        headers.push(header.endsWith('_')? header.slice(0, -1): header);
+        headers.push(header.endsWith('_') ? header.slice(0, -1) : header);
       }
       this.JSON.length = 0;
 
@@ -50,17 +49,19 @@ segImport.controller('mainController', ['$scope', '$http',
         var obj = {};
         var currentLine = this.array[i];
 
-        for (var j=0; j<currentLine.length; j++) {
+        for (var j = 0; j < currentLine.length; j++) {
           // clean lines and weird values
           currentLine[j] = currentLine[j].replace(/(\r\n|\n|\r)/gm, "");
           // convert "true" and "false" to booleans equivalents
-          if(['false', 'true', 'FALSE', 'TRUE'].includes(currentLine[j])) {
+          if (['false', 'true', 'FALSE', 'TRUE'].includes(currentLine[j])) {
             currentLine[j] = ['true', 'TRUE'].includes(currentLine[j]);
           }
           // Converts dates to the right format
-          if (regexDateFormat1.test(currentLine[j]) || regexDateFormat2.test(currentLine[j])) {
-            currentLine[j] =  new Date(currentLine[j]).toISOString();
-          }
+          regexDateFormats.forEach((regexDate) => {
+            if (regexDate.test(currentLine[j])) {
+              currentLine[j] = new Date(currentLine[j]).toISOString();
+            }
+          });
         }
 
         for (var j = 0; j < headers.length; j++) {
@@ -69,16 +70,16 @@ segImport.controller('mainController', ['$scope', '$http',
             var parts = headers[j].split('.');
             // chaining parts
             var ref = obj;
-            for (var k =0; k < parts.length; k++) {
-              if(!ref[parts[k]]) {
-                ref[parts[k]]={}
+            for (var k = 0; k < parts.length; k++) {
+              if (!ref[parts[k]]) {
+                ref[parts[k]] = {}
               }
-              if (k+1 < parts.length) {
+              if (k + 1 < parts.length) {
                 ref = ref[parts[k]]
               }
             }
 
-            ref[parts[parts.length-1]] = currentLine[j];
+            ref[parts[parts.length - 1]] = currentLine[j];
           } else {
             obj[headers[j]] = currentLine[j];
           }
@@ -92,7 +93,8 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Post csv.JSON to end point.
     csv.importJSON = async function importJSON() {
-      var slices = csv.spliceIntoChunks(this.JSON,1000);
+      var slices = csv.spliceIntoChunks(this.JSON, 1000);
+      console.log('Starting import...')
       for (var i = 0; i < slices.length; i++) {
         await new Promise(r => setTimeout(r, 2000));
         $http.post('/api/import', { batch: slices[i], writeKey: this.writeKey })
@@ -105,5 +107,7 @@ segImport.controller('mainController', ['$scope', '$http',
             console.log(data);
           });
       }
+      console.log('Import completed!')
+
     };
   }]);

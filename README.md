@@ -1,5 +1,8 @@
 # Import
+## Installing the Importer
+Run `npm i` to install all the node dependencies.
 
+## Executing the Importer
 You can now import a CSV directly into Segment for you to see what the data looks like.
 
 Run `npm start` then visit `localhost:3000`.
