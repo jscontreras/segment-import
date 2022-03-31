@@ -41,6 +41,15 @@ segImport.controller('mainController', ['$scope', '$http',
       return fieldValue;
     }
 
+    csv.processOverrides = function processOverrides(obj) {
+      if(conversionData.overrides[obj.action]) {
+        const overrides = conversionData.overrides[obj.action];
+        for (var prop in overrides) {
+          obj[prop] = overrides[prop];
+        }
+      }
+    }
+
 
     // Convert csv.array to csv.JSON.
     csv.arrayToJSON =  async function arrayToJSON() {
@@ -95,7 +104,8 @@ segImport.controller('mainController', ['$scope', '$http',
             obj[headers[j]] = currentLine[j];
           }
         }
-
+        // Processing Overrides
+        this.processOverrides(obj);
         this.JSON.push(obj);
       }
 
@@ -115,6 +125,7 @@ segImport.controller('mainController', ['$scope', '$http',
             console.log(data);
             if(i == slices.length) {
               console.log('Import Completed!');
+              alert('Import Completed, check Browser Console for more details');
             }
           })
           .error(function (err, data) {

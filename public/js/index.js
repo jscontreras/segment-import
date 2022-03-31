@@ -9,6 +9,9 @@ async function readTextFile() {
 window.onload = function() {
   readTextFile().then(data => {
     window.conversionData = data;
+    window.conversionData = window.conversionData ? window.conversionData : {};
+    window.stringToint = window.stringToint ? window.stringToint : [];
+
   })
   var fileInput = document.getElementById('fileInput');
   var fileDisplayArea = document.getElementById('fileDisplayArea');

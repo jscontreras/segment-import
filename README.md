@@ -18,7 +18,27 @@ Verify your `JSON objects` and scroll to the bottom of the page and click `impor
 The application automatically converts `true`,`TRUE`, `false`, `FALSE` stings to the corresponding boolean values.
 ### Date Strings
 The application automatically converts dates like `2021-11-02 9:20:35` to the corresponding ` ISO-8601` format.
+### String to Int conversions
+Add the field name to the `stringToint` array in the configuration file `/public/config/conversions.json`. Use the field name only.
 
+For example if the column is `traits.address.fieldName` include `fieldName` as the value.
+### Fields Overrides/Additions
+Add the field overrides JSON piece to the `identify` object using the action type in `/public/config/conversions.json`.
+```json
+{
+  "stringToint" : [
+    "amount"
+  ],
+  "overrides": {
+    "identify": {
+      "integrations": {
+        "Salesforce": true
+      }
+    }
+  }
+}
+```
+> This override will add the `integrations` value to the JSON payload and will parse `amount` to its `int` value.
 
 ## Track Event Example
 The script parses column names with `.` as nested properties.

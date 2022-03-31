@@ -1,5 +1,12 @@
 {
   "stringToint" : [
     "amount"
-  ]
+  ],
+  "overrides": {
+    "identify": {
+      "integrations": {
+        "Salesforce": true
+      }
+    }
+  }
 }
