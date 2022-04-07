@@ -118,13 +118,13 @@ segImport.controller('mainController', ['$scope', '$http',
       console.log('Starting import...')
       var i = 0;
       for (i = 0; i < slices.length; i++) {
-        console.log(`Processing (${i}  of ${slices.length}) 1000 requests block(s)...`);
+        console.log(`Processing (${i+1}  of ${slices.length}) 1000 requests block(s)...`);
         await new Promise(r => setTimeout(r, 2000));
         $http.post('/api/import', { batch: slices[i], writeKey: this.writeKey })
           .success(function (err, data) {
             console.log(err);
             console.log(data);
-            console.log(`Block (${i}  of ${slices.length}) processed.`);
+            console.log(`Block (${i}  of ${slices.length}) processed...`);
 
             if(i == slices.length) {
               console.log('Import Completed!');
