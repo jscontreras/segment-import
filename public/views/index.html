@@ -71,6 +71,7 @@
 
     <div class="row-fluid" ng-show="csv.array.length != 0">
       <div class="col-lg-12">
+        <h3>Payload Samples Preview (top 10) </h3>
         <pre ng-show="csv.JSONString.length != 0">{{ csv.JSONString }}</pre>
         <hr>
         <div class="btn btn-info" ng-click="csv.importJSON()" ng-disabled="csv.writeKey.length == 0">
