@@ -33,16 +33,16 @@ segImport.controller('mainController', ['$scope', '$http',
     }
 
     csv.applyConversions = function applyConversions(fieldName, fieldValue) {
-      if(conversionData.stringToint.includes(fieldName)) {
-        let source = fieldValue.replace(',','');
-        source = source.replace("'",'');
+      if (conversionData.stringToint.includes(fieldName)) {
+        let source = fieldValue.replace(',', '');
+        source = source.replace("'", '');
         return Number(source);
       }
       return fieldValue;
     }
 
     csv.processOverrides = function processOverrides(obj) {
-      if(conversionData.overrides[obj.action]) {
+      if (conversionData.overrides[obj.action]) {
         const overrides = conversionData.overrides[obj.action];
         for (var prop in overrides) {
           obj[prop] = overrides[prop];
@@ -50,9 +50,37 @@ segImport.controller('mainController', ['$scope', '$http',
       }
     }
 
+    csv.findMistake = async function(batchArray) {
+      console.log(JSON.stringify(batchArray, null, 2));
+      var i = 0;
+      for (i = 0; i < batchArray.length; i++) {
+        console.log(`Processing (${i + 1}  of ${batchArray.length}) entry...`);
+        try {
+          const resp = await axios.post('/api/single', { payload: batchArray[i], writeKey: this.writeKey });
+          if (!JSON.stringify(resp.data).includes('Bad Request')) {
+            console.log(`ITEM (${i + 1}  of ${batchArray.length}) processed...`, resp.data);
+
+            if (i == batchArray.length) {
+              console.log('ITEM Completed!');
+              alert('Import Completed, check Browser Console for more details');
+            }
+          }
+          else {
+            console.error(`ITEM (${i + 1}  of ${batchArray.length}) FAILED...`);
+            i = batchArray.length;
+          }
+
+        } catch (err) {
+            console.log(err);
+            i = batchArray.length;
+            console.error(`ITEM (${i + 1}  of ${slices.length}) FAILED...`);
+        }
+      }
+
+    }
 
     // Convert csv.array to csv.JSON.
-    csv.arrayToJSON =  async function arrayToJSON() {
+    csv.arrayToJSON = async function arrayToJSON() {
       const regexDateFormats = [/\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm, /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm, /\d\d\d\d-(0|1)\d-\d\d?T\d\d:\d\d:\d\d.\d\d\d\d\d\d/gm];
       var headersStock = this.array[0];
       var headers = [];
@@ -118,23 +146,30 @@ segImport.controller('mainController', ['$scope', '$http',
       console.log('Starting import...')
       var i = 0;
       for (i = 0; i < slices.length; i++) {
-        console.log(`Processing (${i+1}  of ${slices.length}) 1000 requests block(s)...`);
-        await new Promise(r => setTimeout(r, 2000));
-        $http.post('/api/import', { batch: slices[i], writeKey: this.writeKey })
-          .success(function (err, data) {
-            console.log(err);
-            console.log(data);
-            console.log(`Block (${i}  of ${slices.length}) processed...`);
+        console.log(`Processing (${i + 1}  of ${slices.length}) 1000 requests block(s)...`);
+        try {
+          const resp = await axios.post('/api/import', { batch: slices[i], writeKey: this.writeKey });
+          if (!JSON.stringify(resp.data).includes('Bad Request')) {
+            console.log(`Block (${i + 1}  of ${slices.length}) processed...`, resp.data);
 
-            if(i == slices.length) {
+            if (i == slices.length) {
               console.log('Import Completed!');
               alert('Import Completed, check Browser Console for more details');
             }
-          })
-          .error(function (err, data) {
+            await new Promise(r => setTimeout(r, 2000));
+          }
+          else {
+            console.error(`Block (${i + 1}  of ${slices.length}) FAILED...`);
+            await csv.findMistake(slices[i]);
+            i = slices.length;
+          }
+
+        } catch (err) {
             console.log(err);
-            console.log(data);
-          });
+            console.error(`Block (${i + 1}  of ${slices.length}) FAILED...`);
+            await csv.findMistake(slices[i]);
+            i = slices.length;
+        }
       }
     };
   }]);

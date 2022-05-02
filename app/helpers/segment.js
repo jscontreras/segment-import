@@ -23,6 +23,24 @@
         json: true
       };
       request(opts, fn);
+    },
+    singleImport: function batchImport(writeKey, record, fn) {
+      var pathSpec = 'https://api.segment.io/v1/' + record.method;
+      var auth = {
+        user: writeKey || '',
+        pass: ''
+      };
+      var opts = {
+        uri: pathSpec,
+        method: 'POST',
+        timeout: 50000,
+        followRedirect: true,
+        maxRedirects: 10,
+        auth: auth,
+        body: record,
+        json: true
+      };
+      request(opts, fn);
     }
   };
 

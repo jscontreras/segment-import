@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function () {
 
   /**
    * Import helpers ============================================================
@@ -10,9 +10,9 @@
   var ok = require('assert');
 
   // Public functions. =========================================================
-  module.exports = function(app) {
+  module.exports = function (app) {
     // API routes ==============================================================
-    app.post('/api/import', function(req, res) {
+    app.post('/api/import', function (req, res) {
       // Send request to Segment.
       // Need writeKey
       var writeKey = req.body.writeKey;
@@ -20,7 +20,7 @@
         batch: req.body.batch
       };
 
-      Segment.batchImport(writeKey, batch, function(err, http, body) {
+      Segment.batchImport(writeKey, batch, function (err, http, body) {
         if (err)
           res.send(err, 400);
 
@@ -30,9 +30,26 @@
       });
     });
 
+    // API routes ==============================================================
+    app.post('/api/single', function (req, res) {
+      // Send request to Segment.
+      // Need writeKey
+      var writeKey = req.body.writeKey;
+
+      Segment.batchImport(writeKey, req.body.payload, function (err, http, body) {
+        if (err)
+          res.send(err, 400);
+
+        console.log(body);
+
+        res.send(body, 200);
+      });
+    });
+
+
     // Application routes ======================================================
-    app.get('/*', function(req, res) {
-      res.sendfile('index.html', {'root': './public/views/'});
+    app.get('/*', function (req, res) {
+      res.sendfile('index.html', { 'root': './public/views/' });
     });
   };
 
