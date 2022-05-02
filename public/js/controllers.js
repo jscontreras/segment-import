@@ -72,8 +72,8 @@ segImport.controller('mainController', ['$scope', '$http',
 
         } catch (err) {
             console.log(err);
-            i = batchArray.length;
             console.error(`ITEM (${i + 1}  of ${slices.length}) FAILED...`);
+            i = batchArray.length;
         }
       }
 
