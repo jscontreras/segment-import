@@ -108,8 +108,8 @@ segImport.controller('mainController', ['$scope', '$http',
         this.processOverrides(obj);
         this.JSON.push(obj);
       }
-
-      this.JSONString = JSON.stringify(this.JSON.slice(0, Math.min(10, this.JSON.length)), null, 2);
+      this.JSONString = `Total Records: (${this.JSON.length}): \r\n`;
+      this.JSONString += JSON.stringify(this.JSON.slice(0, Math.min(10, this.JSON.length)), null, 2);
     };
 
     // Post csv.JSON to end point.
