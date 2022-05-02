@@ -142,21 +142,21 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Post csv.JSON to end point.
     csv.importJSON = async function importJSON() {
-      var slices = csv.spliceIntoChunks(this.JSON, 1000);
+      var slices = csv.spliceIntoChunks(this.JSON, 200);
       console.log('Starting import...')
       var i = 0;
       for (i = 0; i < slices.length; i++) {
-        console.log(`Processing (${i + 1}  of ${slices.length}) 1000 requests block(s)...`);
+        console.log(`Processing (${i + 1}  of ${slices.length}) 200 requests block(s)...`);
         try {
           const resp = await axios.post('/api/import', { batch: slices[i], writeKey: this.writeKey });
           if (!JSON.stringify(resp.data).includes('Bad Request')) {
             console.log(`Block (${i + 1}  of ${slices.length}) processed...`, resp.data);
 
-            if (i == slices.length) {
+            if (i == slices.length - 1) {
               console.log('Import Completed!');
               alert('Import Completed, check Browser Console for more details');
             }
-            await new Promise(r => setTimeout(r, 2000));
+            //await new Promise(r => setTimeout(r, 2000));
           }
           else {
             console.error(`Block (${i + 1}  of ${slices.length}) FAILED...`);
