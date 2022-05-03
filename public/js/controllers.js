@@ -81,7 +81,12 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Convert csv.array to csv.JSON.
     csv.arrayToJSON = async function arrayToJSON() {
-      const regexDateFormats = [/\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm, /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm, /\d\d\d\d-(0|1)\d-\d\d?T\d\d:\d\d:\d\d.\d\d\d\d\d\d/gm];
+      const regexDateFormats = [
+        /\d\d\d\d-(0|1)\d-\d\d?\s(1|2)?\d:\d\d?:\d\d?/gm,
+        /1?\d\/\d\d?\/\d\d?\s\d\d?:\d\d/gm,
+        /\d\d\d\d-(0|1)\d-\d\d?T\d\d:\d\d:\d\d.\d\d\d\d\d\d/gm,
+        /\d\d?\/\d\d?\/\d\d\d\d\s\d\d?:\d\d:\d\d\s(PM|AM)/gm
+      ];
       var headersStock = this.array[0];
       var headers = [];
       for (var i = 0; i < headersStock.length; i++) {
@@ -142,11 +147,11 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Post csv.JSON to end point.
     csv.importJSON = async function importJSON() {
-      var slices = csv.spliceIntoChunks(this.JSON, 200);
+      var slices = csv.spliceIntoChunks(this.JSON, 400);
       console.log('Starting import...')
       var i = 0;
       for (i = 0; i < slices.length; i++) {
-        console.log(`Processing (${i + 1}  of ${slices.length}) 200 requests block(s)...`);
+        console.log(`Processing (${i + 1}  of ${slices.length}) 400 requests block(s)...`);
         try {
           const resp = await axios.post('/api/import', { batch: slices[i], writeKey: this.writeKey });
           if (!JSON.stringify(resp.data).includes('Bad Request')) {
