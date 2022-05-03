@@ -12,12 +12,18 @@ Verify your `JSON objects` and scroll to the bottom of the page and click `impor
 
 > Records are processed in batches of `1000` records executed with a delay of `1 second`. Inspect the `browser console` to see how the callbacks sets are processed.
 
-## DATA CONVERSIONS
+## Data Conversions
 
 ### Boolean Values
 The application automatically converts `true`,`TRUE`, `false`, `FALSE` stings to the corresponding boolean values.
 ### Date Strings
-The application automatically converts dates like `2021-11-02 9:20:35` to the corresponding ` ISO-8601` format.
+The application automatically converts dates like `2021-11-02 9:20:35` and other formats to the corresponding ` ISO-8601` format. Make sure your dates look `ISO-8601` in the preview. Example: `2022-04-29T00:38:42.321Z`.
+
+## Configuration file conversions.json
+Customize the following options located in `public/config/conversions.json`.
+### batchSize
+The amount of transactions per batch request.
+> 500 is a recommended size and has been tested with long imports. If your import fails and the retry can't find any errors (check browser console) then decrease this number.
 ### String to Int conversions
 Add the field name to the `stringToint` array in the configuration file `/public/config/conversions.json`. Use the field name only.
 
@@ -35,10 +41,13 @@ Add the field overrides JSON piece to the `identify` object using the action typ
         "Salesforce": true
       }
     }
-  }
+  },
+  "batchSize": 500
 }
 ```
 > This override will add the `integrations` value to the JSON payload and will parse `amount` to its `int` value.
+
+## Examples
 
 ## Track Event Example
 The script parses column names with `.` as nested properties.

@@ -8,5 +8,6 @@
         "Salesforce": true
       }
     }
-  }
+  },
+  "batchSize": 500
 }

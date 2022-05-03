@@ -11,6 +11,8 @@ window.onload = function() {
     window.conversionData = data;
     window.conversionData = window.conversionData ? window.conversionData : {};
     window.stringToint = window.stringToint ? window.stringToint : [];
+    console.info('Configuration LOADED /public/condig/conversion.json \r\n Check README.md for detail.');
+    console.info(JSON.stringify(conversionData, null, 2));
 
   })
   var fileInput = document.getElementById('fileInput');

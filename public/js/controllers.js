@@ -147,11 +147,11 @@ segImport.controller('mainController', ['$scope', '$http',
 
     // Post csv.JSON to end point.
     csv.importJSON = async function importJSON() {
-      var slices = csv.spliceIntoChunks(this.JSON, 400);
+      var slices = csv.spliceIntoChunks(this.JSON, conversionData.batchSize);
       console.log('Starting import...')
       var i = 0;
       for (i = 0; i < slices.length; i++) {
-        console.log(`Processing (${i + 1}  of ${slices.length}) 400 requests block(s)...`);
+        console.log(`Processing (${i + 1}  of ${slices.length}) ${conversionData.batchSize} requests block(s)...`);
         try {
           const resp = await axios.post('/api/import', { batch: slices[i], writeKey: this.writeKey });
           if (!JSON.stringify(resp.data).includes('Bad Request')) {
