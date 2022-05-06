@@ -1,5 +1,39 @@
 'use strict';
 
+/*!
+ * Deep merge two or more objects together.
+ * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @param   {Object}   objects  The objects to merge together
+ * @returns {Object}            Merged values of defaults and options
+ */
+var deepMerge = function () {
+
+	// Setup merged object
+	var newObj = {};
+
+	// Merge the object into the newObj object
+	var merge = function (obj) {
+		for (var prop in obj) {
+			if (obj.hasOwnProperty(prop)) {
+				// If property is an object, merge properties
+				if (Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+					newObj[prop] = deepMerge(newObj[prop], obj[prop]);
+				} else {
+					newObj[prop] = obj[prop];
+				}
+			}
+		}
+	};
+
+	// Loop through each object and conduct a merge
+	for (var i = 0; i < arguments.length; i++) {
+		merge(arguments[i]);
+	}
+
+	return newObj;
+
+};
+
 segImport.controller('mainController', ['$scope', '$http',
   function ($scope, $http) {
     var csv = $scope.csv = {};
@@ -43,11 +77,10 @@ segImport.controller('mainController', ['$scope', '$http',
 
     csv.processOverrides = function processOverrides(obj) {
       if (conversionData.overrides[obj.action]) {
-        const overrides = conversionData.overrides[obj.action];
-        for (var prop in overrides) {
-          obj[prop] = overrides[prop];
-        }
+        const objOverrides = conversionData.overrides[obj.action];
+        return deepMerge(obj, objOverrides);
       }
+      return obj;
     }
 
     csv.findMistake = async function(batchArray) {
@@ -138,7 +171,7 @@ segImport.controller('mainController', ['$scope', '$http',
           }
         }
         // Processing Overrides
-        this.processOverrides(obj);
+        obj = this.processOverrides(obj);
         this.JSON.push(obj);
       }
       this.JSONString = `Total Records: (${this.JSON.length}): \r\n`;

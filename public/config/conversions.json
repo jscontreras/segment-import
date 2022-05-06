@@ -4,6 +4,9 @@
   ],
   "overrides": {
     "identify": {
+      "traits": {
+        "segment_user": true
+      },
       "integrations": {
         "Salesforce": true
       }
