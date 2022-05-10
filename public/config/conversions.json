@@ -1,6 +1,7 @@
 {
   "stringToint" : [
-    "amount"
+    "amount",
+    "value"
   ],
   "overrides": {
     "identify": {
